@@ -25,13 +25,13 @@
         <div class="flow-groups">
           <div class="splitline-and-nodes" v-for="(item,index) in data" :key="item.uid"  >
             <div class="flow-group splitline">
-              <div class="button" @click="addStage(index)">
+              <div class="button" title="添加新的阶段" @click="addStage(index)">
                 <div class="circle-plus-btn"> + </div>
               </div>
             </div>
-            <div class="flow-group editable"  @mousemove="flowGroupMouseMove(item)" @mouseleave="flowGroupMouseLeave(item)">
+            <div class="flow-group editable" @mousemove="flowGroupMouseMove(item)" @mouseleave="flowGroupMouseLeave(item)">
               <div class="group-head">
-                步骤{{index + 1}}
+                阶段{{index + 1}}<a-icon @click="deleteStage(index)" class="delete-flow-icon" title="删除" type="delete"/>
               </div>
               <div class="stages">
                 <div class="container" v-for="(c_item) in item.nodes" :key="c_item.uid">
@@ -61,7 +61,7 @@
             </div>
           <div class="flow-group flow-group-create">
             <div class="group-head">
-              测试
+              新阶段
             </div>
             <div class="stages">
               <div class="container">
@@ -149,6 +149,10 @@ export default {
         this.data.splice(index,0,obj)
       }
     },
+    // 删除不走
+    deleteStage(index){
+      this.data.splice(index,1)
+    },
     // 添加并行任务
     addTask(index,c_index){
       const uuid = this.uid()
@@ -168,6 +172,13 @@ export default {
   text-align: left;
   height: 20px;
   font-size: 14px;
+}
+.delete-flow-icon{
+  margin-left:5px;
+  cursor: pointer;
+}
+.delete-flow-icon:hover{
+  color:#ff4d4f;
 }
 .pipeline-flow{
   font-size: 13px;
