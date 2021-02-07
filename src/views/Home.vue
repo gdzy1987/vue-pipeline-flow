@@ -1,21 +1,21 @@
 <template>
   <div class="home">
-    <div class="pipeline-flow">
+    <div class="pipeline-flow" ref="pipelineFlow">
       <div class="sidebar">
         <div class="header">源</div>
         <div class="source">
           <div class="item">
             <div class="card">
                <div class="left">
-                <img src="https://img.alicdn.com/tfs/TB12kn0r8v0gK0jSZKbXXbK2FXa-80-80.png">
+                <img src="./svg/git.svg">
               </div>
               <div class="center">
-                <div class="at-title">toob-gnirps/elpmaxe-wolf</div>
+                <div class="at-title">devops-nezha-ui</div>
               </div>
             </div>
             <div class="branch">
               <div class="at-title">
-                master
+                master <a-icon type="branches" /> &nbsp; 
               </div>
             </div>
           </div>
@@ -23,30 +23,33 @@
       </div>
       <div class="content">
         <div class="flow-groups">
-          <div style="display:inline-block;height:100%" v-for="item in data" :key="item.uid"  >
+          <div class="splitline-and-nodes" v-for="(item,index) in data" :key="item.uid"  >
             <div class="flow-group splitline">
-              <div class="button">
-                <div class="self-btn"> + </div>
+              <div class="button" @click="addStage(index)">
+                <div class="circle-plus-btn"> + </div>
               </div>
             </div>
             <div class="flow-group editable"  @mousemove="flowGroupMouseMove(item)" @mouseleave="flowGroupMouseLeave(item)">
               <div class="group-head">
-                测试
+                步骤{{index + 1}}
               </div>
               <div class="stages">
-                <div class="container" v-for="c_item in item.nodes" :key="c_item.uid">
+                <div class="container" v-for="(c_item) in item.nodes" :key="c_item.uid">
                   <div class="tasks-container">
                     <div class="flow-job">
                       <div class="content">
-                        <div class="component-name">{{c_item.name}}</div>
+                        <div class="component-name" >{{c_item.name}}</div>
                       </div>
                     </div>
                   </div>
                 </div>
                 <div class="container add-stage-container" :class="{'render-blue-border':item.btn_hover}" v-if="item.flow_hover" >
                   <div class="tasks-container">
-                    <div class="flow-job plusbtn" @mousemove="addTaskMouseMove(item)" @mouseleave="addTaskMouseLeave(item)">
-                      <div class="component-name">并行任务</div>
+                    <div class="flow-job plusbtn" @click="addTask(index)" @mousemove="addTaskMouseMove(item)" @mouseleave="addTaskMouseLeave(item)">
+                      <div class="component-name">
+                        <a-icon type="plus-circle" theme="filled" style="font-size:15px;vertical-align: sub;"/>&nbsp;&nbsp;
+                        并行任务
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -63,8 +66,10 @@
             <div class="stages">
               <div class="container">
                 <div class="tasks-container">
-                  <div class="flow-job plusbtn">
-                      <div class="name">新的任务</div>
+                  <div class="flow-job plusbtn" @click="addStage(-1)">
+                      <div class="name">
+                        <a-icon type="plus-circle" theme="filled" style="font-size:16px;vertical-align: sub;"/>&nbsp;
+                         新的任务</div>
                   </div>
                 </div>
               </div>
@@ -80,20 +85,6 @@
 export default {
   name: 'Home',
   components: {
-  },
-  methods:{
-    flowGroupMouseMove(item){
-      item.flow_hover = true
-    },
-    flowGroupMouseLeave(item){
-      item.flow_hover = false
-    },
-    addTaskMouseMove(item){
-      item.btn_hover = true
-    },
-    addTaskMouseLeave(item){
-      item.btn_hover = false
-    },
   },
   data(){
     return{
@@ -125,6 +116,48 @@ export default {
         },
       ]
     }
+  },
+  methods:{
+    // 鼠标移入区域，展示按钮
+    flowGroupMouseMove(item){
+      item.flow_hover = true
+    },
+    flowGroupMouseLeave(item){
+      item.flow_hover = false
+    },
+    // 鼠标移入按钮，颜色高亮
+    addTaskMouseMove(item){
+      item.btn_hover = true
+    },
+    addTaskMouseLeave(item){
+      item.btn_hover = false
+    },
+    // 添加步骤
+    addStage(index){
+      const uuid = this.uid()
+      const obj = {
+        uid:"q1"+ uuid,
+        flow_hover:false,
+        btn_hover:false,
+        nodes:[
+          {name:"任务" + uuid,uid:"c1"+ uuid},
+        ]
+      }
+      if(index == -1){
+        this.data.push(obj)
+      }else{
+        this.data.splice(index,0,obj)
+      }
+    },
+    // 添加并行任务
+    addTask(index,c_index){
+      const uuid = this.uid()
+      const obj = { name:"Task" + uuid, uid:"c2"+ uuid }
+      this.data[index].nodes.push(obj)
+    },
+    uid() {
+      return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
+    }
   }
 }
 </script>
@@ -134,6 +167,7 @@ export default {
   direction: rtl;
   text-align: left;
   height: 20px;
+  font-size: 14px;
 }
 .pipeline-flow{
   font-size: 13px;
@@ -142,6 +176,7 @@ export default {
   overflow-x: auto;
   height: 100vh;
   box-sizing: border-box;
+  background: #f0f0f0;
   .sidebar{
     display: inline-block;
     min-width: 300px;
@@ -205,9 +240,6 @@ export default {
             overflow: hidden;
             margin-right: 6px;
           }
-          .right{
-
-          }
         }
         .branch{
           position: relative;
@@ -247,16 +279,14 @@ export default {
       .flow-group-create{
         margin-right:30px;
         .stages{
-          .add-stage-container:before{
+          .container:before{
             width: 50%!important;
           }
-          
           .container:before{
             border-left: none;
             border-right: none;
             border-radius: 0!important;
           }
-          
         }
         .tasks-container{
           display: flex;
@@ -297,6 +327,7 @@ export default {
         }
         .stages{
           box-sizing: border-box;
+          margin-bottom: 100px;
           .container{
             position: relative;
             .tasks-container{
@@ -307,6 +338,7 @@ export default {
               .plusbtn{
                 &:hover{
                   background: #fff;
+                  color: #1b9aee;
                   border: 1px solid #1b9aee;
                 }
                 text-align: center;
@@ -347,7 +379,6 @@ export default {
               }
             }
           }
-          
           .container:before{
             content: "";
             position: absolute;
@@ -374,10 +405,14 @@ export default {
           }
         }
       }
-      .splitline:first-child{
+      .splitline-and-nodes{
+        display:inline-block;
+        height:100%
+      }
+      .splitline-and-nodes:first-child{
         .button::after{
-          //  width: 24px!important;
-          //  margin-left:0
+           width: 24px!important;
+           margin-left:0
         }
       }
       .splitline{
@@ -395,7 +430,7 @@ export default {
           cursor: pointer;
           color: #8c8c8c;
           height: 100%;
-          .self-btn{
+          .circle-plus-btn{
             width: 20px;
             height: 20px;
             color:#fff;
@@ -405,9 +440,10 @@ export default {
             top: 96px;
             margin-left: 15px;
             z-index: 2;
-            font-size:18px
+            font-size:18px;
+            line-height: 22px;
           }
-          .self-btn:hover{
+          .circle-plus-btn:hover{
             background-color: #1890ff;
           }
         }
@@ -423,7 +459,7 @@ export default {
           border-top: 1px solid #d9d9d9;
           position: absolute;
           margin-left: -24px;
-          top: 105.5px;
+          top: 107px;
         }
       }
     }
