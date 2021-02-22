@@ -25,8 +25,8 @@
         <div class="flow-groups">
           <div class="splitline-and-nodes" v-for="(item,index) in data" :key="item.uid"  >
             <div class="flow-group splitline">
-              <div class="button" title="添加新的阶段" @click="addStage(index)">
-                <div class="circle-plus-btn"> + </div>
+              <div class="button" title="添加新的阶段" >
+                <div class="circle-plus-btn" @click="addStage(index)"> + </div>
               </div>
             </div>
             <div class="flow-group editable" @mousemove="flowGroupMouseMove(item)" @mouseleave="flowGroupMouseLeave(item)">
@@ -34,12 +34,22 @@
                 阶段{{index + 1}}<a-icon @click="deleteStage(index)" class="delete-flow-icon" title="删除" type="delete"/>
               </div>
               <div class="stages">
-                <div class="container" v-for="(c_item) in item.nodes" :key="c_item.uid">
+                <div class="container" v-for="(c_item,c_index) in item.nodes" :key="c_item.uid">
                   <div class="tasks-container">
-                    <div class="flow-job">
+                    <div class="flow-job" @mousemove="nodeMouseMove(c_item)" @mouseleave="nodeMouseLeave(c_item)">
                       <div class="content">
-                        <div class="component-name" >{{c_item.name}}</div>
+                        <div class="component-name" >
+                          <img src="./svg/scan.svg"/>
+                          {{c_item.name}}
+                        </div>
+
+                        <div class="extra-right">
+                          <div class="extra" v-if="c_item.node_hover" @click="deleteNode(index,c_index)">
+                            <a-icon type="minus-circle" theme="filled" class="extra-icon"/>&nbsp;&nbsp;
+                          </div>
+                        </div>
                       </div>
+                     
                     </div>
                   </div>
                 </div>
@@ -47,7 +57,7 @@
                   <div class="tasks-container">
                     <div class="flow-job plusbtn" @click="addTask(index)" @mousemove="addTaskMouseMove(item)" @mouseleave="addTaskMouseLeave(item)">
                       <div class="component-name">
-                        <a-icon type="plus-circle" theme="filled" style="font-size:15px;vertical-align: sub;"/>&nbsp;&nbsp;
+                        <a-icon type="plus-circle" theme="filled" style="font-size:16px;vertical-align: sub;margin-right:5px"/>&nbsp;&nbsp;
                         并行任务
                       </div>
                     </div>
@@ -68,8 +78,9 @@
                 <div class="tasks-container">
                   <div class="flow-job plusbtn" @click="addStage(-1)">
                       <div class="name">
-                        <a-icon type="plus-circle" theme="filled" style="font-size:16px;vertical-align: sub;"/>&nbsp;
-                         新的任务</div>
+                        <a-icon type="plus-circle" theme="filled" style="font-size:16px;vertical-align: sub;margin-right:5px"/>&nbsp;
+                         新的任务
+                      </div>
                   </div>
                 </div>
               </div>
@@ -94,7 +105,7 @@ export default {
           flow_hover:false,
           btn_hover:false,
           nodes:[
-            {name:"node构建",uid:"c1"},
+            {name:"node构建node构建node构建node构建",uid:"c1",node_hover:false},
           ]
         },
         {
@@ -102,8 +113,8 @@ export default {
           flow_hover:false,
           btn_hover:false,
           nodes:[
-            {name:"单元测试",uid:"c2"},
-            {name:"代码扫描",uid:"c3"}
+            {name:"单元测试",uid:"c2",node_hover:false},
+            {name:"代码扫描",uid:"c3",node_hover:false}
           ]
         },
         {
@@ -111,13 +122,32 @@ export default {
           flow_hover:false,
           btn_hover:false,
           nodes:[
-            {name:"镜像部署",uid:"c4"},
+            {name:"镜像部署",uid:"c4",node_hover:false},
           ]
         },
       ]
     }
   },
   methods:{
+    //删除节点
+    deleteNode(index,c_index){
+      const nodeLength = this.data[index].nodes.length
+      if(c_index === 0 && nodeLength === 1 ){
+        this.data.splice(index,1)
+      }else{
+        this.data[index].nodes.splice(c_index,1)
+      }
+    },
+    //鼠标移入节点，展示删除按钮
+    nodeMouseMove(item){
+      item.node_hover = true
+      this.$forceUpdate()
+    },
+    //鼠标移出节点，不展示删除按钮
+    nodeMouseLeave(item){
+      item.node_hover = false
+      this.$forceUpdate()
+    },
     // 鼠标移入区域，展示按钮
     flowGroupMouseMove(item){
       item.flow_hover = true
@@ -277,6 +307,7 @@ export default {
       }
     }
   }
+ 
   .content{
     display: inline-block;
     max-height: 100vh;
@@ -369,6 +400,9 @@ export default {
                 justify-content: center;
                 margin: 10px 0;
                 transition: all .2s ease-in-out;
+                .content:hover{
+                  border: 1px solid #1b9aee;
+                }
                 .content{
                   box-shadow: 0 2px 4px 0 rgb(38 38 38 / 10%);
                   min-width: 140px;
@@ -385,6 +419,44 @@ export default {
                     display: inline-block;
                     color: #262626;
                     color: var(--gray-08,#262626);
+                    img{
+                      width: 24px;
+                      height: 24px;
+                      margin-right: 8px;
+                    }
+                  }
+                }
+                .extra-right{
+                  display: inline-block;
+                  width: 20px;
+                  height: 20px;
+                  position: relative;
+                  right: -13px;
+                  margin-top: -2px;
+                  .extra::before{
+                    content: "";
+                    position: absolute;
+                    width: 16px;
+                    // border-top: 1px solid #ff4d4f;
+                    top: 50%;
+                    margin-top: -1px;
+                    right: 18px;
+                  }
+                  .extra{
+                    width: 20px;
+                    // position: absolute;
+                    right: -22px;
+                    cursor: pointer;
+                    .extra-icon{
+                      font-size:16px;
+                      vertical-align: sub;
+                      margin-right:5px;
+                      color: #999;
+                      &:hover{
+                        color: #ff4d4f;
+                      }
+                      
+                    }
                   }
                 }
               }
@@ -450,9 +522,10 @@ export default {
             position: absolute;
             top: 96px;
             margin-left: 15px;
+            margin-right: 5px;
             z-index: 2;
             font-size:18px;
-            line-height: 22px;
+            line-height: 21px;
           }
           .circle-plus-btn:hover{
             background-color: #1890ff;
