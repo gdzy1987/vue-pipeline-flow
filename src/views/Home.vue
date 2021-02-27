@@ -36,6 +36,14 @@
               <div class="stages">
                 <div class="container" v-for="(c_item,c_index) in item.nodes" :key="c_item.uid">
                   <div class="tasks-container">
+                    <div class="action" @click="changeActionType(c_item)">
+                      <a-tooltip :title="c_item.auto ? '自动触发': '手动触发'">
+
+                        <a-icon v-if="c_item.auto" type="thunderbolt" theme="filled" style="color:#1890ff"/>
+                        <a-icon v-else type="thunderbolt" />
+                      </a-tooltip>
+
+                    </div>
                     <div class="flow-job" @mousemove="nodeMouseMove(c_item)" @mouseleave="nodeMouseLeave(c_item)">
                       <div class="content">
                         <div class="component-name" >
@@ -105,7 +113,7 @@ export default {
           flow_hover:false,
           btn_hover:false,
           nodes:[
-            {name:"node构建node构建node构建node构建",uid:"c1",node_hover:false},
+            {name:"node构建node构建node构建node构建",uid:"c1",node_hover:false,auto:true},
           ]
         },
         {
@@ -113,8 +121,8 @@ export default {
           flow_hover:false,
           btn_hover:false,
           nodes:[
-            {name:"单元测试",uid:"c2",node_hover:false},
-            {name:"代码扫描",uid:"c3",node_hover:false}
+            {name:"单元测试",uid:"c2",node_hover:false,auto:true},
+            {name:"代码扫描",uid:"c3",node_hover:false,auto:true}
           ]
         },
         {
@@ -122,7 +130,7 @@ export default {
           flow_hover:false,
           btn_hover:false,
           nodes:[
-            {name:"镜像部署",uid:"c4",node_hover:false},
+            {name:"镜像部署",uid:"c4",node_hover:false,auto:true},
           ]
         },
       ]
@@ -162,6 +170,10 @@ export default {
     addTaskMouseLeave(item){
       item.btn_hover = false
     },
+    // 变更触发方式
+    changeActionType(item){
+      item.auto = !item.auto
+    },
     // 添加步骤
     addStage(index){
       const uuid = this.uid()
@@ -170,7 +182,7 @@ export default {
         flow_hover:false,
         btn_hover:false,
         nodes:[
-          {name:"任务" + uuid,uid:"c1"+ uuid},
+          {name:"任务" + uuid,uid:"c1"+ uuid,auto:true},
         ]
       }
       if(index == -1){
@@ -186,7 +198,7 @@ export default {
     // 添加并行任务
     addTask(index,c_index){
       const uuid = this.uid()
-      const obj = { name:"Task" + uuid, uid:"c2"+ uuid }
+      const obj = { name:"Task" + uuid, uid:"c2"+ uuid,auto:true}
       this.data[index].nodes.push(obj)
     },
     uid() {
@@ -391,6 +403,21 @@ export default {
                 width: 127px;
                 cursor: pointer;
                 box-shadow: 0 2px 4px 0 rgb(38 38 38 / 10%);
+              }
+              .action{
+                box-shadow: 0 2px 4px 0 rgb(38 38 38 / 10%);
+                width: 40px;
+                margin: 10px 14px 10px 10px;
+                background: #fff;
+                border: 1px solid #e5e5e5;
+                border-radius: 20px;
+                height: 40px;
+                font-size: 17px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 1;
+                cursor: pointer;
               }
               .flow-job{
                 z-index: 1;
