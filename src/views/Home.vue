@@ -22,7 +22,7 @@
         </div>
       </div>
       <div class="content">
-        <div class="flow-groups">
+        <div class="flow-groups " ref="flowGroups">
           <div class="splitline-and-nodes" v-for="(item,index) in data" :key="item.uid"  >
             <div class="flow-group splitline">
               <div class="button" title="添加新的阶段" >
@@ -34,27 +34,38 @@
                 阶段{{index + 1}}<a-icon @click="deleteStage(index)" class="delete-flow-icon" title="删除" type="delete"/>
               </div>
               <div class="stages">
-                <div class="container" v-for="(c_item,c_index) in item.nodes" :key="c_item.uid">
+                <div class="container" v-for="(c_item,c_index) in item.nodes" :key="'two'+c_index">
                   <div class="tasks-container">
                     <div class="action" @click="changeActionType(c_item)">
                       <a-tooltip :title="c_item.auto ? '自动触发': '手动触发'">
-
                         <a-icon v-if="c_item.auto" type="thunderbolt" theme="filled" style="color:#1890ff"/>
                         <a-icon v-else type="thunderbolt" />
                       </a-tooltip>
-
                     </div>
-                    <div class="flow-job" @mousemove="nodeMouseMove(c_item)" @mouseleave="nodeMouseLeave(c_item)">
-                      <div class="content">
+                    <div class="flow-job flow-job-capsule" v-for="(task) in c_item" :key="task.uid" @mousemove="nodeMouseMove(c_item)" @mouseleave="nodeMouseLeave(c_item)">
+                      
+                      <div class="extra-pre">
+                         <div class="mini-btn">
+                          <span>+</span>
+                        </div>
+                      </div>
+
+                      <div class="content" >
                         <div class="component-name" >
                           <img src="./svg/scan.svg"/>
-                          {{c_item.name}}
+                          {{task.name}}
                         </div>
 
                         <div class="extra-right">
-                          <div class="extra" v-if="c_item.node_hover" @click="deleteNode(index,c_index)">
+                          <!-- <div class="extra" v-if="c_item.node_hover" @click="deleteNode(index,c_index)">
                             <a-icon type="minus-circle" theme="filled" class="extra-icon"/>&nbsp;&nbsp;
-                          </div>
+                          </div> -->
+                        </div>
+                      </div>
+
+                      <div class="extra-next">
+                        <div class="mini-btn">
+                          <span>+</span>
                         </div>
                       </div>
                      
@@ -62,7 +73,7 @@
                   </div>
                 </div>
                 <div class="container add-stage-container" :class="{'render-blue-border':item.btn_hover}" v-if="item.flow_hover" >
-                  <div class="tasks-container">
+                  <div class="tasks-container" style="padding-left:100px">
                     <div class="flow-job plusbtn" @click="addTask(index)" @mousemove="addTaskMouseMove(item)" @mouseleave="addTaskMouseLeave(item)">
                       <div class="component-name">
                         <a-icon type="plus-circle" theme="filled" style="font-size:16px;vertical-align: sub;margin-right:5px"/>&nbsp;&nbsp;
@@ -81,7 +92,7 @@
             <div class="group-head">
               新阶段
             </div>
-            <div class="stages">
+            <div class="stages" id="pToShow">
               <div class="container">
                 <div class="tasks-container">
                   <div class="flow-job plusbtn" @click="addStage(-1)">
@@ -113,7 +124,10 @@ export default {
           flow_hover:false,
           btn_hover:false,
           nodes:[
-            {name:"node构建node构建node构建node构建",uid:"c1",node_hover:false,auto:true},
+            [
+              {name:"node构建node构建node构建node构建",uid:"c1",node_hover:false,auto:true},
+              {name:"node555345",uid:"c11",node_hover:false,auto:true}
+            ],
           ]
         },
         {
@@ -121,8 +135,8 @@ export default {
           flow_hover:false,
           btn_hover:false,
           nodes:[
-            {name:"单元测试",uid:"c2",node_hover:false,auto:true},
-            {name:"代码扫描",uid:"c3",node_hover:false,auto:true}
+            [{name:"单元测试",uid:"c2",node_hover:false,auto:true}],
+            [{name:"代码扫描",uid:"c3",node_hover:false,auto:true}]
           ]
         },
         {
@@ -130,7 +144,7 @@ export default {
           flow_hover:false,
           btn_hover:false,
           nodes:[
-            {name:"镜像部署",uid:"c4",node_hover:false,auto:true},
+            [{name:"镜像部署",uid:"c4",node_hover:false,auto:true}],
           ]
         },
       ]
@@ -173,6 +187,7 @@ export default {
     // 变更触发方式
     changeActionType(item){
       item.auto = !item.auto
+      this.$forceUpdate()
     },
     // 添加步骤
     addStage(index){
@@ -181,15 +196,21 @@ export default {
         uid:"q1"+ uuid,
         flow_hover:false,
         btn_hover:false,
-        nodes:[
+        nodes:[[
           {name:"任务" + uuid,uid:"c1"+ uuid,auto:true},
-        ]
+        ]]
       }
       if(index == -1){
         this.data.push(obj)
+        setTimeout(()=>{
+          const x = this.$refs['flowGroups'].clientWidth
+          this.$refs['pipelineFlow'].scrollTo(x,0)
+        },500)
       }else{
         this.data.splice(index,0,obj)
       }
+  
+     
     },
     // 删除不走
     deleteStage(index){
@@ -198,7 +219,7 @@ export default {
     // 添加并行任务
     addTask(index,c_index){
       const uuid = this.uid()
-      const obj = { name:"Task" + uuid, uid:"c2"+ uuid,auto:true}
+      const obj = [{ name:"Task" + uuid, uid:"c2"+ uuid,auto:true}]
       this.data[index].nodes.push(obj)
     },
     uid() {
@@ -388,7 +409,6 @@ export default {
               display: flex;
               z-index: 1;
               margin: 0 50px;
-              justify-content: center;
               .plusbtn{
                 &:hover{
                   background: #fff;
@@ -427,12 +447,43 @@ export default {
                 justify-content: center;
                 margin: 10px 0;
                 transition: all .2s ease-in-out;
-                .content:hover{
-                  border: 1px solid #1b9aee;
+                
+                .mini-btn{
+                  width: 18px;
+                  height: 18px;
+                  display: none;
+                  border-radius: 50%;
+                  color: #fff;
+                  text-align: center;
+                  background-color: transparent;
+                  cursor: pointer;
+                  overflow: hidden;
+                  font-size: 20px;
+                  line-height: 21px;
+                  span{
+                    position: relative;
+                    left: 0.8px;
+                  }
+                } 
+                .extra-pre{
+                  width: 20px;
+                  height: 20px;
+                  background:transparent;
+                  border-radius: 50%;
+                  margin-right: 15px;
+                  box-sizing: border-box;
+                }
+                .extra-next{
+                  width: 20px;
+                  height: 20px;
+                  margin-left: 15px;
+                  border-radius: 50%;
+                  box-sizing: border-box;
+                  
                 }
                 .content{
                   box-shadow: 0 2px 4px 0 rgb(38 38 38 / 10%);
-                  min-width: 140px;
+                  min-width: 130px;
                   padding: 0 12px;
                   background: #fff;
                   border: 1px solid #e5e5e5;
@@ -445,7 +496,6 @@ export default {
                   .component-name{
                     display: inline-block;
                     color: #262626;
-                    color: var(--gray-08,#262626);
                     img{
                       width: 24px;
                       height: 24px;
@@ -485,6 +535,44 @@ export default {
                       
                     }
                   }
+                }
+              }
+              .flow-job-capsule:hover{
+                .content{
+                  border: 1px solid #1b9aee;
+                }
+                .mini-btn{
+                  display: block;
+                }
+                .extra-pre{
+                  background:#1b9aee;
+                }
+                .extra-next{
+                  background:#1b9aee;
+                }
+                .extra-pre:hover{
+                  background:#145b95;
+                }
+                .extra-next:hover{
+                  background:#145b95;
+                }
+                .extra-pre::before{
+                  left: 18px;
+                  content: "";
+                  position: absolute;
+                  width: 16px;
+                  border-top: 1px solid #1b9aee;
+                  top: 50%;
+                  margin-top: -1px;
+                }
+                .extra-next::before{
+                  right: 18px;
+                  content: "";
+                  position: absolute;
+                  width: 16px;
+                  border-top: 1px solid #1b9aee;
+                  top: 50%;
+                  margin-top: -1px;
                 }
               }
             }
