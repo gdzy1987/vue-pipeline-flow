@@ -1,152 +1,15 @@
-<template>
-  <div class="home">
-    <div class="pipeline-flow">
-      <div class="sidebar">
-        <div class="header">源</div>
-        <div class="source">
-          <div class="item">
-            <div class="card">
-               <div class="left">
-                <img src="https://img.alicdn.com/tfs/TB12kn0r8v0gK0jSZKbXXbK2FXa-80-80.png">
-              </div>
-              <div class="center">
-                <div class="at-title">toob-gnirps/elpmaxe-wolf</div>
-              </div>
-            </div>
-            <div class="branch">
-              <div class="at-title">
-                master
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="content">
-        <div class="flow-groups">
-          <div class="flow-group splitline">
-            <div class="button">
-              <div class="self-btn">
-                  +
-              </div>
-            </div>
-          </div>
-          <div class="flow-group editable">
-            <div class="group-head">
-              测试
-            </div>
-            <div class="stages">
-              <div class="container">
-                <div class="tasks-container">
-                  <div class="flow-job">
-                    <div class="content">
-                      <div class="component-name"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="container">
-                <div class="tasks-container">
-                  <div class="flow-job">
-                    <div class="content">
-                      <div class="component-name"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-               <div class="container add-stage-container">
-                <div class="tasks-container">
-                  <div class="flow-job plusbtn">
-                      <div class="component-name">并行任务</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="flow-group splitline">
-            <div class="button">
-              <div class="self-btn">
-                  +
-              </div>
-            </div>
-          </div>
-          <div class="flow-group editable">
-            <div class="group-head">
-              测试
-            </div>
-            <div class="stages">
-              <div class="container">
-                <div class="tasks-container">
-                  <div class="flow-job">
-                    <div class="content">
-                      <div class="component-name"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="flow-group splitline">
-            <div class="button">
-              <div class="self-btn">
-                  +
-              </div>
-            </div>
-          </div>
-          <div class="flow-group flow-group-create">
-            <div class="group-head">
-              测试
-            </div>
-            <div class="stages">
-              <div class="container add-stage-container">
-                <div class="tasks-container">
-                  <div class="flow-job plusbtn">
-                      <div class="name">新的任务</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</template>
-
-<script>
-export default {
-  name: 'Home',
-  components: {
-  },
-  data(){
-    return{
-      data:[
-        {
-          nodes:[
-            {name:"node构建"},
-          ]
-        },
-        {
-          nodes:[
-            {name:"单元测试"},
-            {name:"代码扫描"}
-          ]
-        },
-        {
-          nodes:[
-            {name:"镜像部署"},
-          ]
-        },
-      ]
-    }
-  }
-}
-</script>
-
-<style lang="less" scoped>
 .at-title{
   direction: rtl;
   text-align: left;
   height: 20px;
+  font-size: 14px;
+}
+.delete-flow-icon{
+  margin-left:5px;
+  cursor: pointer;
+}
+.delete-flow-icon:hover{
+  color:#ff4d4f;
 }
 .pipeline-flow{
   font-size: 13px;
@@ -155,6 +18,7 @@ export default {
   overflow-x: auto;
   height: 100vh;
   box-sizing: border-box;
+  background: #f0f0f0;
   .sidebar{
     display: inline-block;
     min-width: 300px;
@@ -218,9 +82,6 @@ export default {
             overflow: hidden;
             margin-right: 6px;
           }
-          .right{
-
-          }
         }
         .branch{
           position: relative;
@@ -247,6 +108,7 @@ export default {
       }
     }
   }
+ 
   .content{
     display: inline-block;
     max-height: 100vh;
@@ -260,9 +122,9 @@ export default {
       .flow-group-create{
         margin-right:30px;
         .stages{
-          .add-stage-container:before{
+          .container:before{
             width: 50%!important;
-          } 
+          }
           .container:before{
             border-left: none;
             border-right: none;
@@ -308,16 +170,17 @@ export default {
         }
         .stages{
           box-sizing: border-box;
+          margin-bottom: 100px;
           .container{
             position: relative;
             .tasks-container{
               display: flex;
               z-index: 1;
               margin: 0 50px;
-              justify-content: center;
               .plusbtn{
                 &:hover{
                   background: #fff;
+                  color: #1b9aee;
                   border: 1px solid #1b9aee;
                 }
                 text-align: center;
@@ -329,6 +192,21 @@ export default {
                 cursor: pointer;
                 box-shadow: 0 2px 4px 0 rgb(38 38 38 / 10%);
               }
+              .action{
+                box-shadow: 0 2px 4px 0 rgb(38 38 38 / 10%);
+                width: 40px;
+                margin: 10px 14px 10px 10px;
+                background: #fff;
+                border: 1px solid #e5e5e5;
+                border-radius: 20px;
+                height: 40px;
+                font-size: 17px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 1;
+                cursor: pointer;
+              }
               .flow-job{
                 z-index: 1;
                 position: relative;
@@ -337,9 +215,46 @@ export default {
                 justify-content: center;
                 margin: 10px 0;
                 transition: all .2s ease-in-out;
+                
+                .mini-btn{
+                  width: 18px;
+                  height: 18px;
+                  display: none;
+                  border-radius: 50%;
+                  color: #fff;
+                  text-align: center;
+                  background-color: transparent;
+                  cursor: pointer;
+                  overflow: hidden;
+                  font-size: 20px;
+                  line-height: 21px;
+                  span{
+                    position: relative;
+                    left: 0.8px;
+                  }
+                } 
+                .extra-pre{
+                  width: 20px;
+                  height: 20px;
+                  background:transparent;
+                  border-radius: 50%;
+                  margin-right: 15px;
+                  box-sizing: border-box;
+                }
+                .extra-next{
+                  width: 20px;
+                  height: 20px;
+                  margin-left: 15px;
+                  border-radius: 50%;
+                  box-sizing: border-box;
+                  
+                }
+                .error{
+                  border-color: red!important;
+                }
                 .content{
                   box-shadow: 0 2px 4px 0 rgb(38 38 38 / 10%);
-                  min-width: 140px;
+                  min-width: 130px;
                   padding: 0 12px;
                   background: #fff;
                   border: 1px solid #e5e5e5;
@@ -352,13 +267,84 @@ export default {
                   .component-name{
                     display: inline-block;
                     color: #262626;
-                    color: var(--gray-08,#262626);
+                    img{
+                      width: 24px;
+                      height: 24px;
+                      margin-right: 8px;
+                    }
                   }
+                }
+                .extra-right{
+                  display: inline-block;
+                  width: 20px;
+                  height: 20px;
+                  position: relative;
+                  right: -9px;
+                  margin-top: -2px;
+                  .extra::before{
+                    content: "";
+                    position: absolute;
+                    width: 16px;
+                    // border-top: 1px solid #ff4d4f;
+                    top: 50%;
+                    margin-top: -1px;
+                    right: 18px;
+                  }
+                  .extra{
+                    width: 20px;
+                    // position: absolute;
+                    right: -22px;
+                    cursor: pointer;
+                    .extra-icon{
+                      font-size:16px;
+                      vertical-align: sub;
+                      margin-right:5px;
+                      color: #ff4d4f;
+                      
+                    }
+                  }
+                }
+              }
+              .flow-job-capsule:hover{
+                .content{
+                  border: 1px solid #1b9aee;
+                }
+                .mini-btn{
+                  display: block;
+                }
+                .extra-pre{
+                  background:#1b9aee;
+                }
+                .extra-next{
+                  background:#1b9aee;
+                }
+                .extra-pre:hover{
+                  background:#145b95;
+                }
+                .extra-next:hover{
+                  background:#145b95;
+                }
+                .extra-pre::before{
+                  left: 18px;
+                  content: "";
+                  position: absolute;
+                  width: 16px;
+                  border-top: 1px solid #1b9aee;
+                  top: 50%;
+                  margin-top: -1px;
+                }
+                .extra-next::before{
+                  right: 18px;
+                  content: "";
+                  position: absolute;
+                  width: 16px;
+                  border-top: 1px solid #1b9aee;
+                  top: 50%;
+                  margin-top: -1px;
                 }
               }
             }
           }
-          
           .container:before{
             content: "";
             position: absolute;
@@ -380,9 +366,16 @@ export default {
           .container:last-child:before{
             border-radius: 0 0 20px 20px;
           }
+          .render-blue-border:before{
+            border-color: #1b9aee!important;
+          }
         }
       }
-      .splitline:first-child{
+      .splitline-and-nodes{
+        display:inline-block;
+        height:100%
+      }
+      .splitline-and-nodes:first-child{
         .button::after{
            width: 24px!important;
            margin-left:0
@@ -403,7 +396,7 @@ export default {
           cursor: pointer;
           color: #8c8c8c;
           height: 100%;
-          .self-btn{
+          .circle-plus-btn{
             width: 20px;
             height: 20px;
             color:#fff;
@@ -412,10 +405,12 @@ export default {
             position: absolute;
             top: 96px;
             margin-left: 15px;
+            margin-right: 5px;
             z-index: 2;
-            font-size:18px
+            font-size:18px;
+            line-height: 21px;
           }
-          .self-btn:hover{
+          .circle-plus-btn:hover{
             background-color: #1890ff;
           }
         }
@@ -431,11 +426,9 @@ export default {
           border-top: 1px solid #d9d9d9;
           position: absolute;
           margin-left: -24px;
-          top: 105.5px;
+          top: 107px;
         }
       }
     }
   }
 }
-
-</style>
