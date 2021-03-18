@@ -4,20 +4,25 @@
       <div class="sidebar">
         <div class="header">源</div>
         <div class="source">
-          <div class="item">
+          <div class="item" v-for="item in sourceList" :key="item.name">
             <div class="card">
                <div class="left">
                 <img src="./svg/git.svg">
               </div>
               <div class="center">
-                <div class="at-title">devops-nezha-ui</div>
+                <div class="at-title">{{item.name}}</div>
               </div>
             </div>
             <div class="branch">
               <div class="at-title">
-                master <a-icon type="branches" /> &nbsp; 
+                {{item.branch}} <a-icon type="branches" /> &nbsp; 
               </div>
             </div>
+
+          </div>
+
+          <div class="add-source-btn">
+             添加代码源
           </div>
         </div>
       </div>
@@ -118,6 +123,16 @@ export default {
   },
   data(){
     return{
+      sourceList:[
+        {
+          name:"devops-ui",
+          branch:"master"
+        },
+        {
+          name:"devops-ui22",
+          branch:"master"
+        }
+      ],
       data:[
         {
           uid:"q1",
